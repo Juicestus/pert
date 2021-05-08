@@ -1,0 +1,23 @@
+# Pert Example 1
+# An impossible to win Rock Paper Scissors game
+# By Justus Languell
+
+func rps()
+	while true then
+		var move = input_int("Exit (0), Rock (1), Paper (2), or Scissors(3) >>> ")
+		if move == 0 then
+			break
+		elif move == 1 then
+			print("Computer picked paper, you loose")
+		elif move == 2 then
+			print("Computer picked scissors, you loose")
+		elif move == 3 then
+			print("Computer picked rock, you loose")
+		else 
+			print("Not a valid move")
+		end
+	end
+end
+
+rps()
+
