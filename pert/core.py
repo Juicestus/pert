@@ -1568,6 +1568,21 @@ Number.false = Number(0)
 Number.true = Number(1)
 Number.math_PI = Number(math.pi)
 
+def srepl(script, f, r):
+   
+    script = script.split('"')
+    nscript = ""
+
+    i=2
+    for selec in script:
+        if i % 2 == 0:
+            nscript += selec.replace(f,r)
+        else:
+            nscript += f'"{selec}"' 
+        i+=1
+
+    return nscript
+
 class String(Value):
 
     def __init__(self, value):
@@ -1910,13 +1925,41 @@ class BuiltInFunction(BaseFunction):
         try:
             with open(fn, "r") as f:
                 script = f.read()
+
+                script = srepl(script,'){',')')
+                script = srepl(script,') {',')')
+                script = srepl(script,')  {',')')
+                
+                script = srepl(script,'else:','else')
+                script = srepl(script,'else :','else')
+                script = srepl(script,'else  :','else')
+
+                script = srepl(script,'}','end')
+                script = srepl(script,':','then')
+                script = srepl(script,'{','then')
+
+                script = srepl(script,'!','not')
+                script = srepl(script,'||','or')
+                script = srepl(script,'&&','and')
+
+                script = srepl(script,'//','#')
+
+                script = srepl(script,'$','var ')
+
+                script = srepl(script,'@','func ')
+                script = srepl(script,'function','func')
+
+
+
+
+        
         except Exception as e:
             return RTResult().failure(RTError(
                 self.pos_start, self.pos_end,
                 f"Failed to load script \"{fn}\"\n" + str(e),
                 exec_ctx
             ))
-
+        
         _, error = run(fn, script)
         
         if error:

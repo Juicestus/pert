@@ -1,0 +1,11 @@
+# Syntax
+
+# This is a comment
+// This is also a comment
+
+// Here are math operations, ints/floats and defining a variable
+var variable = 5 + 5 - 4 * 3.5 / -1
+$ variable = variable - 1
+$variable = variable - 1
+
+print(variable)

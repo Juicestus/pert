@@ -1,0 +1,30 @@
+// Pert Example 1
+// Syntax 2
+// An impossible to win Rock Paper Scissors game
+// By Justus Languell
+
+@ rps() {
+	while true {
+		$ move = input_int("Exit (0), Rock (1), Paper (2), or Scissors(3) >>> ")
+		if move == 0 :
+			break
+		elif move == 1 :
+			print("Computer picked paper, you loose")
+		elif move == 2 :
+			print("Computer picked scissors, you loose")
+		elif move == 3 :
+			print("Computer picked rock, you loose")
+		else:
+            print("Not a valid move")
+		}
+	}
+}
+
+rps()
+
+
+
+
+
+
+

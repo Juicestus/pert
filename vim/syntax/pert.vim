@@ -1,13 +1,12 @@
 " Pert Vim syntax highlighting
 " By Justus Languell
 
-syn match pertComment "\v#.*$"
-
 syn region pertString start=/\v"/ skip=/v\\./ end=/\v"/
 
 syn match pertOperator "\v\="
 syn match pertOperator "\v\!\="
 syn match pertOperator "\v\*"
+syn match pertOperator "\v\/"
 syn match pertOperator "\v\+"
 syn match pertOperator "\v\-"
 syn match pertOperator "\v\<"
@@ -16,6 +15,9 @@ syn match pertOperator "\v\=\="
 syn match pertOperator "\v\>"
 syn match pertOperator "\v\>\="
 
+syn match pertComment "\v#.*$"
+syn match pertComment "\v//.*$"
+
 syn keyword pertConditional if
 syn keyword pertConditional elif
 syn keyword pertConditional else
@@ -23,15 +25,32 @@ syn keyword pertConditional else
 syn keyword pertConditional while
 syn keyword pertConditional for
 
-syn keyword pertLogic and
-syn keyword pertLogic not
-syn keyword pertLogic or
+syn keyword pertConditional break
+syn keyword pertConditional continue
 
-syn keyword pertType func
-syn keyword pertType var
+syn keyword pertLogic and
+syn match pertLogic "\v\&\&"
+
+syn keyword pertLogic not
+syn match pertLogic "\v!"
+
+syn keyword pertLogic or
+syn match pertLogic "\v\|\|"
+
+syn keyword pertDef func nextgroup=pertDefName skipwhite
+syn keyword pertDef function nextgroup=pertDefName skipwhite
+syn match pertDef "\v\@" nextgroup=pertDefName skipwhite
+syn match pertDefName '\i\+' contained
+
+syn keyword pertVar var nextgroup=pertVarName skipwhite
+syn match pertVar "\v\$" nextgroup=pertVarName skipwhite
+"syn match pertVarName '\i\+' contained
 
 syn keyword pertFlow then
 syn keyword pertFlow end
+syn match pertFlow "\v\{"
+syn match pertFlow "\v\:"
+syn match pertFlow "\v\}"
 
 syn keyword pertFunction print
 syn keyword pertFunction print_ret
@@ -69,8 +88,13 @@ hi def link pertVariable Identifier
 hi def link pertNumber Number
 hi def link pertFloat Float
 
-hi def link pertType Type
 hi def link pertFlow Type
+
+hi def link pertVar Type
+hi def link pertDef Type
+
+hi def link pertVarName Number
+hi def link pertDefName Number
 
 hi def link pertOperator Operator
 hi def link pertConditional Operator

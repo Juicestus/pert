@@ -27,7 +27,7 @@ if __name__ == '__main__':
     else:
         #print('Error - No file specified')
         print('Pert Shell ("exit" to quit)')
-        
+
         while True:
             executable = input('>>> ')
             if executable == 'exit':

@@ -22,23 +22,48 @@ function! PertIndent(lnum) abort
     return 0
   endif
 
-  let prevl = substitute(getline(prevlnum), '#.*$', '', '')
-  let thisl = substitute(getline(a:lnum), '#.*$', '', '')
+  let prevl = substitute(substitute(getline(prevlnum), '#.*$', '', ''), '//.*$', '', '')
+  let thisl = substitute(substitute(getline(a:lnum), '#.*$', '', ''), '//.*$', '', '')
   let previ = indent(prevlnum)
 
   let ind = previ 
 
+  " Start Block
   if prevl =~ '[(then]\s*$'
     let ind += shiftwidth()
   endif
 
- if prevl =~ '^\s*[)func]'
+  if prevl =~ '[({]\s*$'
     let ind += shiftwidth()
   endif
 
+  if prevl =~ '[(:]\s*$'
+    let ind += shiftwidth()
+  endif
+
+  " Var
+  "if prevl =~ '^\s*[)$]'
+  "  let ind -= shiftwidth()
+  "endif
+
+  " Function
+  if prevl =~ '^\s*[)func]' and not prevl =~ '[({]\s*$'
+    let ind += shiftwidth()
+  endif
+
+  if prevl =~ '^\s*[)@]' and not prevl =~ '[({]\s*$'
+    let ind += shiftwidth()
+  endif
+
+  " End Block
   if thisl =~ '^\s*[)end]'
     let ind -= shiftwidth()
   endif
+
+  if thisl =~ '^\s*[)}]'
+    let ind -= shiftwidth()
+  endif
+  
 
   return ind
 endfunction

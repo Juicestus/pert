@@ -3,7 +3,7 @@
 # By Justus Languell
 
 func rps()
-	while true then
+	while  true then
 		var move = input_int("Exit (0), Rock (1), Paper (2), or Scissors(3) >>> ")
 		if move == 0 then
 			break
@@ -20,4 +20,3 @@ func rps()
 end
 
 rps()
-
