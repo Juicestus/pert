@@ -1586,6 +1586,32 @@ def srepl(script, f, r):
 
     return nscript
 
+def alternativeSyntax(script):
+    script = srepl(script,'){',')')
+    script = srepl(script,') {',')')
+    script = srepl(script,')  {',')')
+    
+    script = srepl(script,'else:','else')
+    script = srepl(script,'else :','else')
+    script = srepl(script,'else  :','else')
+
+    script = srepl(script,'}','end')
+    script = srepl(script,':','then')
+    script = srepl(script,'{','then')
+
+    script = srepl(script,'!','not')
+    script = srepl(script,'||','or')
+    script = srepl(script,'&&','and')
+
+    script = srepl(script,'//','#')
+
+    script = srepl(script,'$','var ')
+
+    script = srepl(script,'@','func ')
+    script = srepl(script,'function','func')
+
+    return script
+
 class String(Value):
 
     def __init__(self, value):
@@ -1784,6 +1810,37 @@ class BuiltInFunction(BaseFunction):
     def __repr__(self):
         return f"<built-in function {self.name}>"
 
+    def execute_pow(self, exec_ctx):
+        base = float(str(exec_ctx.symbol_table.get('base')))
+        power = float(str(exec_ctx.symbol_table.get('power')))
+        number = base**power
+        return RTResult().success(Number(number))
+    execute_pow.arg_names = ['base', 'power']
+
+    def execute_mod(self, exec_ctx):
+        dividend = float(str(exec_ctx.symbol_table.get('dividend')))
+        divisor = float(str(exec_ctx.symbol_table.get('divisor')))
+        try:
+            number = dividend % divisor
+        except:
+            return RTResult().failure(RTError(
+                self.pos_start, self.pos_end,
+                "MOD Failed",
+                exec_ctx
+            ))
+        return RTResult().success(Number(number))
+    execute_mod.arg_names = ['dividend', 'divisor']
+
+    def execute_integer(self, exec_ctx):
+        number = int(float(str(exec_ctx.symbol_table.get('value'))))
+        return RTResult().success(Number(number))
+    execute_integer.arg_names = ['value']
+
+    def execute_float(self, exec_ctx):
+        number = float(str(exec_ctx.symbol_table.get('value')))
+        return RTResult().success(Number(number))
+    execute_float.arg_names = ['value']
+
     def execute_print(self, exec_ctx):
         print(str(exec_ctx.symbol_table.get('value')))
         return RTResult().success(Number.null)
@@ -1929,28 +1986,7 @@ class BuiltInFunction(BaseFunction):
             with open(fn, "r") as f:
                 script = f.read()
 
-                script = srepl(script,'){',')')
-                script = srepl(script,') {',')')
-                script = srepl(script,')  {',')')
-                
-                script = srepl(script,'else:','else')
-                script = srepl(script,'else :','else')
-                script = srepl(script,'else  :','else')
-
-                script = srepl(script,'}','end')
-                script = srepl(script,':','then')
-                script = srepl(script,'{','then')
-
-                script = srepl(script,'!','not')
-                script = srepl(script,'||','or')
-                script = srepl(script,'&&','and')
-
-                script = srepl(script,'//','#')
-
-                script = srepl(script,'$','var ')
-
-                script = srepl(script,'@','func ')
-                script = srepl(script,'function','func')
+                script = alternativeSyntax(script)
         
         except Exception as e:
             return RTResult().failure(RTError(
@@ -1986,6 +2022,10 @@ BuiltInFunction.pop         = BuiltInFunction("pop")
 BuiltInFunction.extend      = BuiltInFunction("extend")
 BuiltInFunction.len			= BuiltInFunction("len")
 BuiltInFunction.run			= BuiltInFunction("run")
+BuiltInFunction.pow			= BuiltInFunction("pow")
+BuiltInFunction.mod			= BuiltInFunction("mod")
+BuiltInFunction.integer		= BuiltInFunction("integer")
+BuiltInFunction.float		= BuiltInFunction("float")
 
 
 # Context
@@ -2294,6 +2334,10 @@ global_symbol_table.set("pop", BuiltInFunction.pop)
 global_symbol_table.set("extend", BuiltInFunction.extend)
 global_symbol_table.set("len", BuiltInFunction.len)
 global_symbol_table.set("run", BuiltInFunction.run)
+global_symbol_table.set("pow", BuiltInFunction.pow)
+global_symbol_table.set("mod", BuiltInFunction.mod)
+global_symbol_table.set("integer", BuiltInFunction.integer)
+global_symbol_table.set("float", BuiltInFunction.float)
 
 def run(fn, text):
     # Generate tokens
@@ -2313,16 +2357,25 @@ def run(fn, text):
     result = interpreter.visit(ast.node, context)
 
     return result.value, result.error
-    
+
     
 # Main Interpreter Frontend
 
 if __name__ == '__main__':
 
+    home = os.path.expanduser('~')
+    if not os.path.isdir(home + "/pert"):
+        os.mkdir(home + "/pert")
+
     if len(sys.argv) > 1:
         filename = sys.argv[1]
         
-        executable = f'run("{filename}")'
+        executable = f'''
+func import(name)
+    run("{home}/pert/" + name + ".pert")
+end
+run("{filename}")'''
+
         result, error = run('<stdin>', executable)
 
         if error:
@@ -2336,7 +2389,7 @@ if __name__ == '__main__':
                 
     else:
         #print('Error - No file specified')
-        print('Pert Shell ("exit" to quit)')
+        print('Pert Shell ("exit" to quit) (Dont try to use imports /:)')
 
         while True:
             executable = input('>>> ')
@@ -2345,6 +2398,8 @@ if __name__ == '__main__':
 
             if executable.strip() == "":
                 continue
+
+            executable = alternativeSyntax(executable)
 
             result, error = run('<stdin>', executable)
 

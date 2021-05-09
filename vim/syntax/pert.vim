@@ -24,6 +24,7 @@ syn keyword pertConditional else
 
 syn keyword pertConditional while
 syn keyword pertConditional for
+syn keyword pertConditional to
 
 syn keyword pertConditional break
 syn keyword pertConditional continue
@@ -46,6 +47,8 @@ syn keyword pertVar var nextgroup=pertVarName skipwhite
 syn match pertVar "\v\$" nextgroup=pertVarName skipwhite
 "syn match pertVarName '\i\+' contained
 
+syn keyword pertImport import
+
 syn keyword pertFlow then
 syn keyword pertFlow end
 syn match pertFlow "\v\{"
@@ -67,6 +70,10 @@ syn keyword pertFunction pop
 syn keyword pertFunction extend
 syn keyword pertFunction len
 syn keyword pertFunction run
+syn keyword pertFunction pow
+syn keyword pertFunction mod
+syn keyword pertFunction integer
+syn keyword pertFunction float
 
 syn keyword pertVariable null
 syn keyword pertVariable false
@@ -92,6 +99,7 @@ hi def link pertFlow Type
 
 hi def link pertVar Type
 hi def link pertDef Type
+hi def link pertImport Type
 
 hi def link pertVarName Number
 hi def link pertDefName Number
@@ -99,6 +107,5 @@ hi def link pertDefName Number
 hi def link pertOperator Operator
 hi def link pertConditional Operator
 hi def link pertLogic Operator
-
 
 let b:current_syntax = "pert"

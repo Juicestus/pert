@@ -3,3 +3,4 @@
 pert/__pycache__
 pert.spec
 build
+tests.pert
