@@ -1,3 +1,5 @@
 .DS_Store
 .vscode/settings.json
 pert/__pycache__
+pert.spec
+build

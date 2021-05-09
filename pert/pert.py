@@ -2313,13 +2313,9 @@ def run(fn, text):
     result = interpreter.visit(ast.node, context)
 
     return result.value, result.error
-
+    
     
 # Main Interpreter Frontend
-
-# https://stackoverflow.com/questions/20530996/aliases-in-windows-command-prompt
-# https://superuser.com/questions/647084/starting-vim-from-windows-powershell
-
 
 if __name__ == '__main__':
 
